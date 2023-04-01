@@ -4,4 +4,4 @@ PYTHON_FILES := $(shell find . -name "*.py" -not -path "./venv/*")
 .PHONY: format
 
 format:
-	black $(PYTHON_FILES)
+	python -m black $(PYTHON_FILES)

@@ -33,13 +33,3 @@ class ChatGPTWrapper:
         time.sleep(SLEEP_SECONDS_AFTER_CALL)  # To make OpenAI rate limiter happy
 
         return completion["choices"][0]["message"]["content"].strip()
-
-    @staticmethod
-    def ask_as_researcher(prompt, paper_content, max_tokens=None):
-        role_message = (
-            "You will answer this question as this research paper itself. "
-            + paper_content
-        )
-        return ChatGPTWrapper.ask(
-            prompt=prompt, role=role_message, max_tokens=max_tokens
-        )

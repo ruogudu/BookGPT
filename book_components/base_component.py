@@ -34,6 +34,6 @@ class BaseComponent(ABC):
         return hash_object.hexdigest()
 
     @staticmethod
-    def combine_hashes(hashes):
+    def combine_hashes(*hashes):
         hash_object = hashlib.md5("".join(hashes).encode())
         return hash_object.hexdigest()

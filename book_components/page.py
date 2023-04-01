@@ -1,13 +1,11 @@
-import hashlib
-
 from book_components.base_component import BaseComponent
 from chatgpt_wrapper import ChatGPTWrapper
 from config import SUMMARY_MAX_TOKENS
 
 
 class Page(BaseComponent):
-    TEMPLATE_SUMMARY = "Summarize this page of a book. {content}"
-    TEMPLATE_ANSWER_WITH_PAGE = 'Answer the question with the content. Keep the answer short and concise. Context: "{content}" Question: {question}'
+    TEMPLATE_SUMMARY = "This is a snippet of a book. Summarize this snippet in {max_tokens} tokens or less. {content}"
+    TEMPLATE_ANSWER_WITH_PAGE = 'Answer the question with the content. Keep the answer short and concise ({max_tokens} tokens or less). Context: "{content}" Question: {question}'
 
     def __init__(self, id, content):
         super().__init__()
@@ -23,6 +21,7 @@ class Page(BaseComponent):
 
     def ask_question(self, question):
         prompt = self.TEMPLATE_ANSWER_WITH_PAGE.format(
+            max_tokens=SUMMARY_MAX_TOKENS,
             question=question,
             content=self.content,
         )
@@ -41,7 +40,9 @@ class Page(BaseComponent):
 
     @staticmethod
     def curate_summary(id, content):
-        prompt = Page.TEMPLATE_SUMMARY.format(content=content)
+        prompt = Page.TEMPLATE_SUMMARY.format(
+            max_tokens=SUMMARY_MAX_TOKENS, content=content
+        )
         answer = ChatGPTWrapper.ask(
             prompt=prompt,
             max_tokens=SUMMARY_MAX_TOKENS,
