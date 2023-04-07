@@ -19,10 +19,6 @@ class BaseComponent(ABC):
         # Ask a question about the component
         pass
 
-    def get_id(self):
-        # Get the id of the component
-        return self.id
-
     @abstractmethod
     def get_hash(self):
         # Get the hash of the component

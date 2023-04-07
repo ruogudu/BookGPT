@@ -1,4 +1,6 @@
 import os
+import urllib
+
 import requests
 import questionary
 import pickle
@@ -41,18 +43,32 @@ def get_api_key():
 
 def get_pdf_url():
     while True:
-        url = questionary.text("Enter the URL of the PDF file:").ask()
-        if url.lower().endswith(".pdf"):
-            try:
-                response = requests.head(url)
-                if response.status_code == 200:
-                    return url
-                else:
-                    print("Invalid URL. Please try again.")
-            except Exception as e:
-                print("Invalid URL. Please try again.")
-        else:
-            print("The URL does not point to a PDF file. Please try again.")
+        pdf_url = questionary.text(
+            "What is the URL of the book (PDF)? (Enter 'exit' to exit)"
+        ).ask()
+
+        try:
+            if pdf_url.strip().lower() == "exit":
+                exit()
+            result = urllib.parse.urlparse(pdf_url)
+            if all([result.scheme, result.netloc]):
+                try:
+                    response = requests.head(pdf_url)
+                    content_type = response.headers["Content-Type"]
+                    if content_type == "application/pdf":
+                        return pdf_url
+                    else:
+                        print("URL does not point to a PDF file")
+                        continue
+                except requests.exceptions.RequestException:
+                    print("Error: Could not retrieve URL")
+                    continue
+            else:
+                print("URL is not valid")
+                continue
+        except ValueError:
+            print("URL is not valid")
+            continue
 
 
 def get_save_path():
@@ -60,12 +76,6 @@ def get_save_path():
         "Enter the path where you want to store the curated book:"
     ).ask()
     return path
-
-
-def get_book_title_and_author():
-    title = questionary.text("Enter the book title:").ask()
-    author = questionary.text("Enter the book author:").ask()
-    return title, author
 
 
 def load_book_from_cache(cache_path):
@@ -76,14 +86,19 @@ def load_book_from_cache(cache_path):
 
 def main():
     api_key = get_api_key()
-    pdf_url = get_pdf_url()
-    book_title, book_author = get_book_title_and_author()
+    is_local_pdf = questionary.confirm("Would you like to load a local PDF file?").ask()
+    if is_local_pdf:
+        pdf_path = questionary.path("Enter the path to the PDF file:").ask()
+        pdf_wrapper = PDFWrapper.from_local_file(pdf_path)
+    else:
+        pdf_url = get_pdf_url()
+        pdf_wrapper = PDFWrapper.from_url(pdf_url)
+
     save_path = get_save_path()
 
     ChatGPTWrapper.init(api_key)
-    pdf_wrapper = PDFWrapper.from_url(pdf_url)
 
-    pdf_constructor = PDFConstructor(book_title, book_author, pdf_wrapper)
+    pdf_constructor = PDFConstructor(pdf_wrapper)
     book = pdf_constructor.construct_book()
 
     # Check if user wants to load from cache
@@ -91,9 +106,7 @@ def main():
         "Would you like to load the Book from cache?"
     ).ask()
     if load_from_cache:
-        cache_path = questionary.path(
-            "Enter the path to the cached Book file:"
-        ).ask()
+        cache_path = questionary.path("Enter the path to the cached Book file:").ask()
         book = load_book_from_cache(cache_path)
     else:
         with open(save_path, "wb") as file:

@@ -31,5 +31,9 @@ class ChatGPTWrapper:
         )
 
         time.sleep(SLEEP_SECONDS_AFTER_CALL)  # To make OpenAI rate limiter happy
+        print(prompt)
+        print("==================")
+        print(completion["choices"][0]["message"]["content"].strip())
+        print("******************")
 
         return completion["choices"][0]["message"]["content"].strip()
