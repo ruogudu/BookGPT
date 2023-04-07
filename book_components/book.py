@@ -27,21 +27,15 @@ class Book(BaseSection):
         )
 
     def get_summary(self):
-        summary = (
-            f"{self.name} by {', '.join(self.authors)}\n\n" + self.summary
-        )
+        summary = f"{self.name} by {', '.join(self.authors)}\n\n" + self.summary
         return summary
 
     def get_content(self):
-        content = (
-                f"{self.name} by {', '.join(self.authors)}\n\n" + self.content
-        )
+        content = f"{self.name} by {', '.join(self.authors)}\n\n" + self.content
         return content
 
     def get_intro(self):
-        return ChatGPTWrapper.ask(
-            self.TEMPLATE_INTRO.format(content=self.content)
-        )
+        return ChatGPTWrapper.ask(self.TEMPLATE_INTRO.format(content=self.content))
 
     def get_book_and_author_names(self):
         prompt = self.TEMPLATE_GET_NAME.format(content=self.content)

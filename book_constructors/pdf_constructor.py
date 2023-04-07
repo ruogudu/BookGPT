@@ -39,8 +39,10 @@ class PDFConstructor(BaseConstructor):
             new_sections = []
             with alive_bar(len(sections), length=40, spinner="dots_waves") as bar:
                 for section_start in range(0, len(sections), SECTION_COUNT_PER_SECTION):
-                    section_end = min(section_start + PAGE_COUNT_PER_SECTION, len(sections))
-                    sub_sections = sections[section_start: section_end]
+                    section_end = min(
+                        section_start + PAGE_COUNT_PER_SECTION, len(sections)
+                    )
+                    sub_sections = sections[section_start:section_end]
                     new_sections.append(Section(len(new_sections) + 1, sub_sections))
                     for _ in range(section_start, section_end):
                         bar()
@@ -50,10 +52,14 @@ class PDFConstructor(BaseConstructor):
         book_name, authors = temp_book.get_book_and_author_names()
         print("Book name:", book_name)
         print("Author name(s):", ", ".join(authors))
-        correct = questionary.confirm("Is the book name and author name(s) correct?").ask()
+        correct = questionary.confirm(
+            "Is the book name and author name(s) correct?"
+        ).ask()
         if not correct:
             book_name = questionary.text("Enter the book name:").ask()
-            author_text = questionary.text("Enter the author name(s), separate by ,:").ask()
+            author_text = questionary.text(
+                "Enter the author name(s), separate by ,:"
+            ).ask()
             authors = [author.strip() for author in author_text.split(",")]
         temp_book.update_book_and_author_names(book_name, authors)
         return temp_book

@@ -129,7 +129,9 @@ def show_help():
     print("Usage: python start.py <command>")
     print("\nAvailable commands:")
     print("  curate-book\tLoad a book and store it to local cache")
-    print("  chat-with-book\tLoad a local cache, let the book do intro, and converse with the book")
+    print(
+        "  chat-with-book\tLoad a local cache, let the book do intro, and converse with the book"
+    )
     print("  help\t\tShow this help message")
 
 
