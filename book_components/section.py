@@ -6,9 +6,9 @@ from config import SUMMARY_MAX_TOKENS
 
 
 class Section(BaseComponent):
-    TEMPLATE_SUMMARY = f"Summarize this section of a book. {{content}}. Limit the summary to {{max_tokens}} tokens."
-    TEMPLATE_FIND_PAGE = f'This is a summary of a book snippet. Find the best sub-section or page to answer this question: "{{question}}". Answer the page or sub-section number in digits only. Answer "Not sure" if you are not sure. Summary: {{content}}. Limit the answer to {{max_tokens}} tokens.'
-    TEMPLATE_ANSWER_WITH_SECTION = f'Answer the question with the content. Keep the answer short and concise. Context: "{{content}}" Question: {{question}}. Limit the answer to {{max_tokens}} tokens.'
+    TEMPLATE_SUMMARY = f"Summarize this section of a book. Limit the summary to {{max_tokens}} tokens. If you find the book's name or the authors' name, include it in the summary. Content: {{content}}."
+    TEMPLATE_FIND_PAGE = f'This is a summary of a book snippet. Find the best section to answer this question: "{{question}}". Answer the section number in digits only. Answer "Not sure" if you are not sure. Summary: {{content}}. Limit the answer to {{max_tokens}} tokens.'
+    TEMPLATE_ANSWER_WITH_SECTION = f'Answer the question with the content. Keep the answer short and concise. Content: "{{content}}" Question: {{question}}. Limit the answer to {{max_tokens}} tokens.'
 
     def __init__(self, id, subcomponents):
         super().__init__()

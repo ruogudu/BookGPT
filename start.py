@@ -68,6 +68,12 @@ def get_book_title_and_author():
     return title, author
 
 
+def load_book_from_cache(cache_path):
+    with open(cache_path, "rb") as file:
+        book = pickle.load(file)
+    return book
+
+
 def main():
     api_key = get_api_key()
     pdf_url = get_pdf_url()
@@ -80,8 +86,18 @@ def main():
     pdf_constructor = PDFConstructor(book_title, book_author, pdf_wrapper)
     book = pdf_constructor.construct_book()
 
-    with open(save_path, "wb") as file:
-        pickle.dump(book, file)
+    # Check if user wants to load from cache
+    load_from_cache = questionary.confirm(
+        "Would you like to load the Book from cache?"
+    ).ask()
+    if load_from_cache:
+        cache_path = questionary.path(
+            "Enter the path to the cached Book file:"
+        ).ask()
+        book = load_book_from_cache(cache_path)
+    else:
+        with open(save_path, "wb") as file:
+            pickle.dump(book, file)
 
     print(book.get_intro())
 
