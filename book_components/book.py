@@ -7,7 +7,7 @@ from config import SUMMARY_MAX_TOKENS
 # Book class
 class Book(BaseSection):
     TEMPLATE_SUMMARY = "Summarize this book. Limit the summary to {max_tokens} tokens. If you find the book's name or the authors' name, include it in the summary. Content: {content}."
-    TEMPLATE_INTRO = "Act as this book. Give yourself a proper name and introduce yourself with a breif summary. Please also provide three questions a reader may want to ask you. The format is 'You may want to ask me these questions...<bullet points>'. Book content: {content}"
+    TEMPLATE_INTRO = "Act as this book itself. Give yourself a proper name and introduce yourself with a breif summary. Please also provide three questions a reader may want to ask you. The format is 'You may want to ask me these questions...<bullet points>'. Book content: {content}"
     TEMPLATE_GET_NAME = 'Find the name of the book and the authors. Make the output ONLY in the format of a valid json object without explanation, format: {{"book_name": "<book_name>", "author_name": ["<author_name_1>", "<author_name_2>"]}} Content: {content}'
 
     def __init__(self, name, authors, subcomponents):
@@ -31,6 +31,12 @@ class Book(BaseSection):
             f"{self.name} by {', '.join(self.authors)}\n\n" + self.summary
         )
         return summary
+
+    def get_content(self):
+        content = (
+                f"{self.name} by {', '.join(self.authors)}\n\n" + self.content
+        )
+        return content
 
     def get_intro(self):
         return ChatGPTWrapper.ask(

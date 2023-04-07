@@ -24,6 +24,11 @@ class BaseComponent(ABC):
         # Get the hash of the component
         pass
 
+    @abstractmethod
+    def get_content(self):
+        # Get the content of the component
+        pass
+
     @staticmethod
     def compute_hash(content):
         hash_object = hashlib.md5(content.encode())

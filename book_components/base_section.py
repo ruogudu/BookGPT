@@ -7,7 +7,7 @@ from config import SUMMARY_MAX_TOKENS
 
 
 class BaseSection(BaseComponent, ABC):
-    TEMPLATE_ANSWER_WITH_SECTION = f'Answer the question with the content. Keep the answer short and concise. Content: "{{content}}" Question: {{question}}. Limit the answer to {{max_tokens}} tokens.'
+    TEMPLATE_ANSWER_WITH_SECTION = f'Act as this book itself. Answer the question with the content. Keep the answer short and concise. Content: "{{content}}" Question: {{question}}. Limit the answer to {{max_tokens}} tokens.'
     TEMPLATE_FIND_PAGE = f'This is a summary of a book snippet. Find the best section or page to answer this question: "{{question}}". Answer the section/page number in digits only. Answer "Not sure" if you are not sure. Summary: {{content}}. Limit the answer to {{max_tokens}} tokens.'
 
     def ask_question(self, question):
@@ -16,7 +16,7 @@ class BaseSection(BaseComponent, ABC):
             return ChatGPTWrapper.ask(
                 self.TEMPLATE_ANSWER_WITH_SECTION.format(
                     max_tokens=SUMMARY_MAX_TOKENS,
-                    content=self.content,
+                    content=self.get_content(),
                     question=question,
                 )
             )

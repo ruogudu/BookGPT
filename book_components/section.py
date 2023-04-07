@@ -25,6 +25,9 @@ class Section(BaseSection):
     def get_id(self):
         return self.id
 
+    def get_content(self):
+        return self.content
+
     @staticmethod
     def curate_summary(id, content):
         prompt = Section.TEMPLATE_SUMMARY.format(

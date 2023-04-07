@@ -1,4 +1,5 @@
 import os
+import sys
 import urllib
 
 import requests
@@ -84,8 +85,9 @@ def load_book_from_cache(cache_path):
     return book
 
 
-def main():
+def curate_book():
     api_key = get_api_key()
+    ChatGPTWrapper.init(api_key)
     is_local_pdf = questionary.confirm("Would you like to load a local PDF file?").ask()
     if is_local_pdf:
         pdf_path = questionary.path("Enter the path to the PDF file:").ask()
@@ -96,21 +98,20 @@ def main():
 
     save_path = get_save_path()
 
-    ChatGPTWrapper.init(api_key)
-
     pdf_constructor = PDFConstructor(pdf_wrapper)
     book = pdf_constructor.construct_book()
 
-    # Check if user wants to load from cache
-    load_from_cache = questionary.confirm(
-        "Would you like to load the Book from cache?"
-    ).ask()
-    if load_from_cache:
-        cache_path = questionary.path("Enter the path to the cached Book file:").ask()
-        book = load_book_from_cache(cache_path)
-    else:
-        with open(save_path, "wb") as file:
-            pickle.dump(book, file)
+    with open(save_path, "wb") as file:
+        pickle.dump(book, file)
+
+    print("Curated book saved to", save_path)
+
+
+def chat_with_book():
+    api_key = get_api_key()
+    ChatGPTWrapper.init(api_key)
+    cache_path = questionary.path("Enter the path to the cached Book file:").ask()
+    book = load_book_from_cache(cache_path)
 
     print(book.get_intro())
 
@@ -122,6 +123,33 @@ def main():
             break
         answer = book.ask_question(question)
         print(answer)
+
+
+def show_help():
+    print("Usage: python start.py <command>")
+    print("\nAvailable commands:")
+    print("  curate-book\tLoad a book and store it to local cache")
+    print("  chat-with-book\tLoad a local cache, let the book do intro, and converse with the book")
+    print("  help\t\tShow this help message")
+
+
+def main():
+    if len(sys.argv) < 2:
+        print("Error: No command provided")
+        show_help()
+        sys.exit(1)
+
+    command = sys.argv[1].lower()
+    if command == "curate-book":
+        curate_book()
+    elif command == "chat-with-book":
+        chat_with_book()
+    elif command == "help":
+        show_help()
+    else:
+        print(f"Error: Unknown command '{command}'")
+        show_help()
+        sys.exit(1)
 
 
 if __name__ == "__main__":
