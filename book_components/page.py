@@ -4,8 +4,8 @@ from config import SUMMARY_MAX_TOKENS
 
 
 class Page(BaseComponent):
-    TEMPLATE_SUMMARY = "This is a snippet of a book. Summarize this snippet in {max_tokens} tokens or less. {content}"
-    TEMPLATE_ANSWER_WITH_PAGE = 'Answer the question with the content. Keep the answer short and concise ({max_tokens} tokens or less). Context: "{content}" Question: {question}'
+    TEMPLATE_SUMMARY = "This is a snippet of a book. Summarize this snippet in {max_tokens} tokens or less. If you find the book's name or the authors' name, include it in the summary. {content}"
+    TEMPLATE_ANSWER_WITH_PAGE = 'Act as this book itself. Answer the question with the content. Keep the answer short and concise ({max_tokens} tokens or less). Context: "{content}" Question: {question}'
 
     def __init__(self, id, content):
         super().__init__()
@@ -37,6 +37,9 @@ class Page(BaseComponent):
 
     def get_id(self):
         return self.id
+
+    def get_content(self):
+        return self.content
 
     @staticmethod
     def curate_summary(id, content):
